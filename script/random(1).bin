@@ -1,0 +1,100 @@
+// random.js —— 随机座位抽取模块
+// 配套 index.html 中已有的 DOM：
+//   #seat-rows  行数输入框    #seat-cols  列数输入框
+//   #seat-unique 不重复勾选框 #btn-seat-draw 抽一个按钮
+//   #btn-seat-reset 清空记录按钮  #seat-roll 结果展示区
+//   #seat-total 总座位数文本  #seat-used 已抽数量文本
+
+// 1. 获取 DOM 元素
+const rowInput   = document.getElementById('seat-rows');
+const colInput   = document.getElementById('seat-cols');
+const uniqueBox  = document.getElementById('seat-unique');
+const drawBtn    = document.getElementById('btn-seat-draw');
+const resetBtn   = document.getElementById('btn-seat-reset');
+const rollEl     = document.getElementById('seat-roll');
+const totalEl    = document.getElementById('seat-total');
+const usedEl     = document.getElementById('seat-used');
+
+// 2. 内部状态：usedSeats 记录已抽过的座位编号（"行_列"）
+let usedSeats = [];
+
+// 3. 计算并刷新总座位数显示
+function updateTotal() {
+  const rows = parseInt(rowInput.value, 10) || 0;
+  const cols = parseInt(colInput.value, 10) || 0;
+  const total = rows * cols;
+  if (totalEl) totalEl.textContent = total;
+}
+
+// 4. 输入行数/列数变化时，更新总数并清空旧记录（避免越界）
+[rowInput, colInput].forEach(el => {
+  if (el) el.addEventListener('input', () => {
+    usedSeats = [];
+    renderRoll();
+    updateTotal();
+  });
+});
+
+// 5. 渲染结果展示区（把已抽座位逐条显示）
+function renderRoll() {
+  if (!rollEl) return;
+  if (usedSeats.length === 0) {
+    rollEl.textContent = '点击"抽一个"开始抽取座位';
+    if (usedEl) usedEl.textContent = 0;
+    return;
+  }
+  rollEl.innerHTML = usedSeats.map(s => {
+    const [r, c] = s.split('_');
+    return '<span class="seat-item">第 ' + r + ' 排 第 ' + c + ' 座</span>';
+  }).join('');
+  if (usedEl) usedEl.textContent = usedSeats.length;
+}
+
+// 6. 核心：抽取一个座位
+function drawOne() {
+  const rows = parseInt(rowInput.value, 10) || 0;
+  const cols = parseInt(colInput.value, 10) || 0;
+  if (rows <= 0 || cols <= 0) {
+    alert('请输入有效的行数和列数！');
+    return;
+  }
+  const total = rows * cols;
+
+  // 不重复模式：所有座位已抽完则提示
+  if (uniqueBox && uniqueBox.checked && usedSeats.length >= total) {
+    alert('所有座位已抽完！请点击"清空记录"重置。');
+    return;
+  }
+
+  let r, c, key;
+  if (uniqueBox && uniqueBox.checked) {
+    // 不重复：循环直到抽到一个未抽过的
+    do {
+      r = Math.floor(Math.random() * rows) + 1;
+      c = Math.floor(Math.random() * cols) + 1;
+      key = r + '_' + c;
+    } while (usedSeats.includes(key));
+    usedSeats.push(key);
+  } else {
+    // 可重复：直接随机
+    r = Math.floor(Math.random() * rows) + 1;
+    c = Math.floor(Math.random() * cols) + 1;
+    usedSeats.push(r + '_' + c);
+  }
+
+  renderRoll();
+}
+
+// 7. 清空已抽记录
+function resetSeats() {
+  usedSeats = [];
+  renderRoll();
+}
+
+// 8. 绑定按钮事件
+if (drawBtn)  drawBtn.addEventListener('click', drawOne);
+if (resetBtn) resetBtn.addEventListener('click', resetSeats);
+
+// 9. 页面加载后初始化
+updateTotal();
+renderRoll();
