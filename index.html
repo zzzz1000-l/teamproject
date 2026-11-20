@@ -100,16 +100,8 @@
       </div>
       <p class="card-hint">按教室的行数和列数，随机抽一个座位，抽过的不会重复。</p>
 
-      <div class="placeholder" id="random-placeholder">
-        <p class="placeholder-title">此模块待实现</p>
-        <p class="placeholder-text">
-          在 <code>script/random.js</code> 里写好抽取逻辑，再把这段占位内容替换成
-          行列输入框与结果显示区即可。样式已经备好了：
-          <code>.field / .field-input</code> 是输入框，<code>.seat-display / .seat-roll</code>
-          是显示结果的大方块。
-        </p>
-      </div>
-      <!-- 组员实现时，把上面的 .placeholder 换成类似结构：
+     
+      
       <div class="seat-config">
         <label class="field"><span class="field-label">行数</span>
           <input class="field-input" id="seat-rows" type="number" min="1" max="20" value="6"></label>
@@ -125,7 +117,7 @@
         <button class="btn btn-ghost" id="btn-seat-reset">清空记录</button>
       </div>
       <p class="card-meta">共 <strong id="seat-total">48</strong> 个座位，已抽 <strong id="seat-used">0</strong> 个</p>
-      -->
+    
     </section>
 
   </main>
@@ -138,8 +130,8 @@
   <script src="script/todo.js"></script>
   <!-- 组员完成对应模块后，在这里补上对应的一行（去掉前面的注释符号即可）：
   <script src="script/convert.js"></script>
-  <script src="script/random.js"></script>
+ <script src="script.js"></script>
   -->
-
+<script src="script/random.js"></script>
 </body>
 </html>
